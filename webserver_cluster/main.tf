@@ -2,7 +2,7 @@ provider "aws" {
     region = "us-east-1"
 }
 
-resource "aws_launch_configuration" "example" {
+resource "aws_launch_configuration" "launch_config" {
     image_id        = "ami-07d9b9ddc6cd8dd30"
     instance_type   = "t2.micro"
     security_groups = [aws_security_group.instance.id]
@@ -19,8 +19,8 @@ resource "aws_launch_configuration" "example" {
     }  
 }
 
-resource "aws_autoscaling_group" "example" {
-    launch_configuration = aws_launch_configuration.example.name
+resource "aws_autoscaling_group" "asg" {
+    launch_configuration = aws_launch_configuration.launch_config.name
     vpc_zone_identifier  = data.aws_subnets.default.ids
 
     min_size = 2
@@ -28,13 +28,13 @@ resource "aws_autoscaling_group" "example" {
 
     tag {
         key = "Name"
-        value = "terraform-asg-example"
+        value = "terraform-asg"
         propagate_at_launch = true
     }
 }
 
 resource "aws_security_group" "instance" {
-    name = "terraform-example-instance"
+    name = "terraform-instance"
 
     ingress {
         from_port   = var.server_port
